@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 class="mb-4">
+    Gerenciamento de Colaboradores
+</h2>
+
+<a href="/cadastrar/" class="btn btn-primary mb-3">
+    Novo Colaborador
+</a>
+
+<form method="GET" class="mb-3">
+
+    <input
+        type="text"
+        name="buscar"
+        class="form-control"
+        placeholder="Pesquisar colaborador"
+    >
+
+</form>
+
+<table class="table table-hover table-bordered">
+
+    <thead class="table-dark">
+
+        <tr>
+
+            <th>Nome</th>
+            <th>CPF</th>
+            <th>Setor</th>
+            <th>Cargo</th>
+            <th>Ações</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        {% for colaborador in colaboradores %}
+
+        <tr>
+
+            <td>{{ colaborador.nome }}</td>
+            <td>{{ colaborador.cpf }}</td>
+            <td>{{ colaborador.setor }}</td>
+            <td>{{ colaborador.cargo }}</td>
+
+            <td>
+
+                <a
+                    href="/editar/{{ colaborador.id }}/"
+                    class="btn btn-warning btn-sm"
+                >
+                    Editar
+                </a>
+
+                <a
+                    href="/excluir/{{ colaborador.id }}/"
+                    class="btn btn-danger btn-sm"
+                >
+                    Excluir
+                </a>
+
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% endblock %}
