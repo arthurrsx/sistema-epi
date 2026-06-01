@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>Equipamentos</h2>
+
+<a href="{% url 'cadastrar_equipamento' %}" class="btn btn-primary">
+    Novo Equipamento
+</a>
+
+<hr>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>CA</th>
+            <th>Quantidade</th>
+            <th>Validade</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for equipamento in equipamentos %}
+        <tr>
+            <td>{{ equipamento.nome_epi }}</td>
+            <td>{{ equipamento.ca }}</td>
+            <td>{{ equipamento.quantidade }}</td>
+            <td>{{ equipamento.validade }}</td>
+
+            <td>
+                <a href="{% url 'editar_equipamento' equipamento.id %}">
+                    Editar
+                </a>
+
+                |
+
+                <a href="{% url 'excluir_equipamento' equipamento.id %}">
+                    Excluir
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

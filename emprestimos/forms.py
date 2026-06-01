@@ -1,0 +1,37 @@
+from django import forms
+from django.utils import timezone
+from .models import Emprestimo
+
+
+class EmprestimoForm(forms.ModelForm):
+
+    class Meta:
+        model = Emprestimo
+        fields = [
+            'colaborador',
+            'equipamento',
+            'data_prevista_devolucao',
+            'status',
+            'data_devolucao',
+            'observacao_devolucao',
+        ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # CADASTRO: limita status
+        if not self.instance.pk:
+            self.fields['status'].choices = [
+                ('EMPRESTADO', 'Emprestado'),
+                ('FORNECIDO', 'Fornecido'),
+            ]
+
+    def clean_data_prevista_devolucao(self):
+        data = self.cleaned_data['data_prevista_devolucao']
+
+        if data <= timezone.now():
+            raise forms.ValidationError(
+                'A data prevista de devolução deve ser futura.'
+            )
+
+        return data

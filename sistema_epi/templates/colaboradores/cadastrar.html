@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h3 class="mb-4">Cadastrar Colaborador</h3>
+
+<div class="card p-4 shadow-sm">
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <div class="mb-3">
+            {{ form.nome.label }}
+            {{ form.nome }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.cpf.label }}
+            {{ form.cpf }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.setor.label }}
+            {{ form.setor }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.cargo.label }}
+            {{ form.cargo }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.telefone.label }}
+            {{ form.telefone }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.email.label }}
+            {{ form.email }}
+        </div>
+
+        <button type="submit" class="btn btn-success">
+            Salvar
+        </button>
+
+        <a href="/" class="btn btn-secondary">
+            Voltar
+        </a>
+
+    </form>
+
+</div>
+
+{% endblock %}

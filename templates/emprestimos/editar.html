@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>Editar Empréstimo</h2>
+
+<form method="post">
+
+    {% csrf_token %}
+
+    <div class="mb-3">
+        {{ form.colaborador.label }}
+        {{ form.colaborador }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.equipamento.label }}
+        {{ form.equipamento }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.data_prevista_devolucao.label }}
+        {{ form.data_prevista_devolucao }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.status.label }}
+        {{ form.status }}
+    </div>
+
+    <div class="mb-3" id="campo-data-devolucao">
+        {{ form.data_devolucao.label }}
+        {{ form.data_devolucao }}
+    </div>
+
+    <div class="mb-3" id="campo-observacao">
+        {{ form.observacao_devolucao.label }}
+        {{ form.observacao_devolucao }}
+    </div>
+
+    <button type="submit" class="btn btn-warning">
+        Atualizar
+    </button>
+
+    <a href="/emprestimos/" class="btn btn-secondary">
+        Voltar
+    </a>
+
+</form>
+
+{% endblock %}
