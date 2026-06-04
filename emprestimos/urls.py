@@ -26,4 +26,10 @@ urlpatterns = [
         views.excluir_emprestimo,
         name='excluir_emprestimo'
     ),
+
+    path(
+        'relatorios/',
+        views.relatorios,
+        name='relatorios'
+    ),
 ]

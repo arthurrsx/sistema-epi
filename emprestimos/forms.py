@@ -19,12 +19,18 @@ class EmprestimoForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # CADASTRO: limita status
+        # CADASTRO
         if not self.instance.pk:
             self.fields['status'].choices = [
                 ('EMPRESTADO', 'Emprestado'),
                 ('FORNECIDO', 'Fornecido'),
             ]
+
+        # EDIÇÃO
+        else:
+            self.fields['colaborador'].disabled = True
+            self.fields['equipamento'].disabled = True
+            self.fields['data_prevista_devolucao'].disabled = True
 
     def clean_data_prevista_devolucao(self):
         data = self.cleaned_data['data_prevista_devolucao']

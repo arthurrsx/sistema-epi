@@ -48,4 +48,36 @@
 
 </form>
 
+<script>
+
+function controlarCampos() {
+
+    const status = document.getElementById('id_status').value;
+
+    const campoData = document.getElementById('campo-data-devolucao');
+    const campoObs = document.getElementById('campo-observacao');
+
+    if (
+        status === 'DEVOLVIDO' ||
+        status === 'DANIFICADO' ||
+        status === 'PERDIDO'
+    ) {
+
+        campoData.style.display = 'block';
+        campoObs.style.display = 'block';
+
+    } else {
+
+        campoData.style.display = 'none';
+        campoObs.style.display = 'none';
+    }
+}
+
+document.getElementById('id_status')
+    .addEventListener('change', controlarCampos);
+
+controlarCampos();
+
+</script>
+
 {% endblock %}
