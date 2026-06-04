@@ -2,13 +2,15 @@
 
 {% block content %}
 
-<h2 class="mb-4">
-    Gerenciamento de Colaboradores
-</h2>
+<div class="d-flex justify-content-between align-items-center mb-3">
 
-<a href="/cadastrar/" class="btn btn-primary mb-3">
-    Novo Colaborador
-</a>
+    <h2 class="mb-0">Gerenciamento de Colaboradores</h2>
+
+    <a href="/cadastrar/" class="btn btn-primary">
+        + Novo Colaborador
+    </a>
+
+</div>
 
 <form method="GET" class="mb-3">
 
@@ -17,11 +19,12 @@
         name="buscar"
         class="form-control"
         placeholder="Pesquisar colaborador"
+        value="{{ request.GET.buscar }}"
     >
 
 </form>
 
-<table class="table table-hover table-bordered">
+<table class="table table-hover table-striped align-middle">
 
     <thead class="table-dark">
 
@@ -44,8 +47,15 @@
         <tr>
 
             <td>{{ colaborador.nome }}</td>
-            <td>{{ colaborador.cpf }}</td>
+
+            <td>
+                <span class="badge bg-secondary">
+                    {{ colaborador.cpf }}
+                </span>
+            </td>
+
             <td>{{ colaborador.setor }}</td>
+
             <td>{{ colaborador.cargo }}</td>
 
             <td>
@@ -60,10 +70,21 @@
                 <a
                     href="/excluir/{{ colaborador.id }}/"
                     class="btn btn-danger btn-sm"
+                    onclick="return confirm('Tem certeza que deseja excluir este colaborador?');"
                 >
                     Excluir
                 </a>
 
+            </td>
+
+        </tr>
+
+        {% empty %}
+
+        <tr>
+
+            <td colspan="5" class="text-center">
+                Nenhum colaborador encontrado.
             </td>
 
         </tr>

@@ -16,6 +16,11 @@ class EmprestimoForm(forms.ModelForm):
             'observacao_devolucao',
         ]
 
+        widgets = {
+            'data_prevista_devolucao': forms.DateInput(attrs={'type': 'date'}),
+            'data_devolucao': forms.DateInput(attrs={'type': 'date'}),
+        }
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -26,7 +31,7 @@ class EmprestimoForm(forms.ModelForm):
                 ('FORNECIDO', 'Fornecido'),
             ]
 
-        # EDIÇÃO
+        # EDIÇÃO: bloqueia campos
         else:
             self.fields['colaborador'].disabled = True
             self.fields['equipamento'].disabled = True
@@ -35,7 +40,7 @@ class EmprestimoForm(forms.ModelForm):
     def clean_data_prevista_devolucao(self):
         data = self.cleaned_data['data_prevista_devolucao']
 
-        if data <= timezone.now():
+        if data <= timezone.now().date():
             raise forms.ValidationError(
                 'A data prevista de devolução deve ser futura.'
             )
