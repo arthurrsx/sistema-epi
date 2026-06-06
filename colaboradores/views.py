@@ -64,3 +64,20 @@ def excluir_colaborador(request, id):
     return render(request, 'colaboradores/excluir.html', {
         'colaborador': colaborador
     })
+
+@login_required
+def listar_colaboradores(request):
+
+    busca = request.GET.get('buscar')
+
+    if busca:
+        colaboradores = Colaborador.objects.filter(nome__icontains=busca)
+    else:
+        colaboradores = Colaborador.objects.all()
+
+    total_colaboradores = Colaborador.objects.count()
+
+    return render(request, 'colaboradores/listar.html', {
+        'colaboradores': colaboradores,
+        'total_colaboradores': total_colaboradores
+    })
