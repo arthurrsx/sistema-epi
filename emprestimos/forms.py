@@ -24,14 +24,14 @@ class EmprestimoForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # CADASTRO
+        # CADASTRO (só status permitidos)
         if not self.instance.pk:
             self.fields['status'].choices = [
                 ('EMPRESTADO', 'Emprestado'),
                 ('FORNECIDO', 'Fornecido'),
             ]
 
-        # EDIÇÃO
+        # EDIÇÃO (bloqueia campos fixos)
         else:
             self.fields['colaborador'].disabled = True
             self.fields['equipamento'].disabled = True
@@ -40,7 +40,8 @@ class EmprestimoForm(forms.ModelForm):
     def clean_data_prevista_devolucao(self):
         data = self.cleaned_data['data_prevista_devolucao']
 
-        if data <= timezone.now():
+        # 🔥 CORREÇÃO DO ERRO (date vs datetime)
+        if data <= timezone.now().date():
             raise forms.ValidationError(
                 'A data prevista de devolução deve ser futura.'
             )

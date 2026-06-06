@@ -2,9 +2,47 @@
 
 {% block content %}
 
+<style>
+.container-box {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+}
+
+table tbody tr {
+    transition: 0.2s;
+}
+
+table tbody tr:hover {
+    background-color: #f1f7ff;
+    transform: scale(1.01);
+}
+
+.actions {
+    text-align: right;
+}
+
+.actions a {
+    margin-left: 5px;
+}
+</style>
+
+<div class="container-box">
+
+<!-- TOPO -->
 <div class="d-flex justify-content-between align-items-center mb-3">
 
-    <h2 class="mb-0">Equipamentos</h2>
+    <div>
+
+        <h2 class="mb-0">Gerenciamento de Equipamentos</h2>
+
+        <small class="text-muted">
+            Total de equipamentos:
+            <strong>{{ equipamentos|length }}</strong>
+        </small>
+
+    </div>
 
     <a href="{% url 'cadastrar_equipamento' %}" class="btn btn-primary">
         + Novo Equipamento
@@ -12,16 +50,71 @@
 
 </div>
 
-<table class="table table-hover table-striped align-middle">
+<!-- BUSCA -->
+<div class="d-flex justify-content-start mb-4">
+
+    <div style="position: relative; width: 100%; max-width: 500px;">
+
+        <span style="
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+        ">
+            🔍
+        </span>
+
+        <input
+            type="text"
+            id="busca"
+            class="form-control"
+            placeholder="Pesquisar equipamento..."
+            autocomplete="off"
+            style="
+                padding-left: 40px;
+                border-radius: 25px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                border: 1px solid #ddd;
+            "
+        >
+
+        <button
+            type="button"
+            id="limparBusca"
+            style="
+                position: absolute;
+                right: 12px;
+                top: 50%;
+                transform: translateY(-50%);
+                border: none;
+                background: transparent;
+                font-size: 16px;
+                color: #888;
+                cursor: pointer;
+                display: none;
+            "
+        >
+            ✖
+        </button>
+
+    </div>
+
+</div>
+
+<!-- TABELA -->
+<table class="table table-hover table-striped align-middle" id="tabela-equipamentos">
 
     <thead class="table-dark">
+
         <tr>
             <th>Nome</th>
             <th>CA</th>
             <th>Quantidade</th>
             <th>Validade</th>
-            <th>Ações</th>
+            <th class="actions">Ações</th>
         </tr>
+
     </thead>
 
     <tbody>
@@ -32,27 +125,38 @@
 
             <td>{{ equipamento.nome_epi }}</td>
 
-            <td>{{ equipamento.ca }}</td>
-
             <td>
                 <span class="badge bg-secondary">
+                    {{ equipamento.ca }}
+                </span>
+            </td>
+
+            <td>
+                <span class="badge bg-info">
                     {{ equipamento.quantidade }}
                 </span>
             </td>
 
-            <td>{{ equipamento.validade|date:"d/m/Y" }}</td>
-
             <td>
+                {{ equipamento.validade|date:"d/m/Y" }}
+            </td>
 
-                <a href="{% url 'editar_equipamento' equipamento.id %}"
-                   class="btn btn-sm btn-warning">
-                    Editar
+            <td class="actions">
+
+                <a
+                    href="{% url 'editar_equipamento' equipamento.id %}"
+                    class="btn btn-warning btn-sm"
+                    title="Editar"
+                >
+                    ✏️
                 </a>
 
-                <a href="{% url 'excluir_equipamento' equipamento.id %}"
-                   class="btn btn-sm btn-danger"
-                   onclick="return confirm('Tem certeza que deseja excluir este equipamento?');">
-                    Excluir
+                <a
+                    href="{% url 'excluir_equipamento' equipamento.id %}"
+                    class="btn btn-danger btn-sm"
+                    title="Excluir"
+                >
+                    🗑️
                 </a>
 
             </td>
@@ -63,7 +167,7 @@
 
         <tr>
             <td colspan="5" class="text-center">
-                Nenhum equipamento cadastrado.
+                Nenhum equipamento encontrado.
             </td>
         </tr>
 
@@ -72,5 +176,44 @@
     </tbody>
 
 </table>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const input = document.getElementById("busca");
+    const rows = document.querySelectorAll("#tabela-equipamentos tbody tr");
+    const btnLimpar = document.getElementById("limparBusca");
+
+    function filtrar() {
+
+        const valor = input.value.toLowerCase();
+
+        rows.forEach(row => {
+
+            const texto = row.innerText.toLowerCase();
+
+            if (texto.includes(valor)) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+
+        });
+
+        btnLimpar.style.display = valor ? "block" : "none";
+    }
+
+    input.addEventListener("input", filtrar);
+
+    btnLimpar.addEventListener("click", function () {
+        input.value = "";
+        filtrar();
+        input.focus();
+    });
+
+});
+</script>
 
 {% endblock %}

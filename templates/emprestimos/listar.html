@@ -2,86 +2,121 @@
 
 {% block content %}
 
-<div class="d-flex justify-content-between align-items-center mb-3">
+<style>
+.container-box {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+}
 
-    <h2 class="mb-0">Empréstimos de EPI</h2>
+table tbody tr {
+    transition: 0.2s;
+}
 
-    <a href="{% url 'cadastrar_emprestimo' %}" class="btn btn-primary">
-        + Novo Empréstimo
-    </a>
+table tbody tr:hover {
+    background-color: #f1f7ff;
+    transform: scale(1.01);
+}
+
+.actions a {
+    margin-right: 5px;
+}
+</style>
+
+<div class="container-box">
+
+    <!-- TOPO PADRÃO -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+        <div>
+            <h2 class="mb-0">Gerenciamento de Empréstimos</h2>
+
+            <small class="text-muted">
+                Total de empréstimos:
+                <strong>{{ emprestimos|length }}</strong>
+            </small>
+        </div>
+
+        <a href="{% url 'cadastrar_emprestimo' %}" class="btn btn-primary">
+            + Novo Empréstimo
+        </a>
+
+    </div>
+
+    <!-- TABELA -->
+    <table class="table table-hover table-striped align-middle">
+
+        <thead class="table-dark">
+            <tr>
+                <th>Colaborador</th>
+                <th>Equipamento</th>
+                <th>Status</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for emprestimo in emprestimos %}
+
+            <tr>
+
+                <td>{{ emprestimo.colaborador }}</td>
+                <td>{{ emprestimo.equipamento }}</td>
+
+                <td>
+
+                    {% if emprestimo.status == 'EMPRESTADO' %}
+                        <span class="badge bg-warning text-dark">Emprestado</span>
+
+                    {% elif emprestimo.status == 'FORNECIDO' %}
+                        <span class="badge bg-primary">Fornecido</span>
+
+                    {% elif emprestimo.status == 'DEVOLVIDO' %}
+                        <span class="badge bg-success">Devolvido</span>
+
+                    {% elif emprestimo.status == 'DANIFICADO' %}
+                        <span class="badge bg-danger">Danificado</span>
+
+                    {% elif emprestimo.status == 'PERDIDO' %}
+                        <span class="badge bg-dark">Perdido</span>
+
+                    {% endif %}
+
+                </td>
+
+                <td>
+
+                    <a href="{% url 'editar_emprestimo' emprestimo.id %}"
+                       class="btn btn-warning btn-sm">
+                        Editar
+                    </a>
+
+                    <a href="{% url 'excluir_emprestimo' emprestimo.id %}"
+                       class="btn btn-danger btn-sm"
+                       onclick="return confirm('Tem certeza que deseja excluir este empréstimo?');">
+                        Excluir
+                    </a>
+
+                </td>
+
+            </tr>
+
+            {% empty %}
+
+            <tr>
+                <td colspan="4" class="text-center">
+                    Nenhum empréstimo cadastrado.
+                </td>
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
 
 </div>
-
-<table class="table table-hover table-striped align-middle">
-
-    <thead class="table-dark">
-        <tr>
-            <th>Colaborador</th>
-            <th>Equipamento</th>
-            <th class="text-center">Status</th>
-            <th>Ações</th>
-        </tr>
-    </thead>
-
-    <tbody>
-
-        {% for emprestimo in emprestimos %}
-
-        <tr>
-
-            <td>{{ emprestimo.colaborador }}</td>
-            <td>{{ emprestimo.equipamento }}</td>
-
-            <td class="text-center">
-
-                {% if emprestimo.status == 'EMPRESTADO' %}
-                    <span class="badge bg-warning text-dark">Emprestado</span>
-
-                {% elif emprestimo.status == 'FORNECIDO' %}
-                    <span class="badge bg-primary">Fornecido</span>
-
-                {% elif emprestimo.status == 'DEVOLVIDO' %}
-                    <span class="badge bg-success">Devolvido</span>
-
-                {% elif emprestimo.status == 'DANIFICADO' %}
-                    <span class="badge bg-danger">Danificado</span>
-
-                {% elif emprestimo.status == 'PERDIDO' %}
-                    <span class="badge bg-dark">Perdido</span>
-
-                {% endif %}
-
-            </td>
-
-            <td>
-
-                <a href="{% url 'editar_emprestimo' emprestimo.id %}"
-                   class="btn btn-sm btn-warning">
-                    Editar
-                </a>
-
-                <a href="{% url 'excluir_emprestimo' emprestimo.id %}"
-                   class="btn btn-sm btn-danger"
-                   onclick="return confirm('Tem certeza que deseja excluir este empréstimo?');">
-                    Excluir
-                </a>
-
-            </td>
-
-        </tr>
-
-        {% empty %}
-
-        <tr>
-            <td colspan="4" class="text-center">
-                Nenhum empréstimo cadastrado.
-            </td>
-        </tr>
-
-        {% endfor %}
-
-    </tbody>
-
-</table>
 
 {% endblock %}

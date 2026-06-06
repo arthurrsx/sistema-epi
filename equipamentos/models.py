@@ -5,7 +5,7 @@ class Equipamento(models.Model):
     ca = models.CharField(max_length=30)
     quantidade = models.IntegerField()
     validade = models.DateField()
-    descricao = models.TextField()
+    descricao = models.TextField(blank=True)
 
     def __str__(self):
         return self.nome_epi

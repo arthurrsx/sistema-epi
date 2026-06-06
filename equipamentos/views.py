@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+
 from .models import Equipamento
 from .forms import EquipamentoForm
 
@@ -20,7 +22,14 @@ def cadastrar_equipamento(request):
     form = EquipamentoForm(request.POST or None)
 
     if form.is_valid():
+
         form.save()
+
+        messages.success(
+            request,
+            'Equipamento cadastrado com sucesso!'
+        )
+
         return redirect('listar_equipamentos')
 
     return render(request, 'equipamentos/cadastrar.html', {
@@ -42,7 +51,14 @@ def editar_equipamento(request, id):
     )
 
     if form.is_valid():
+
         form.save()
+
+        messages.success(
+            request,
+            'Equipamento atualizado com sucesso!'
+        )
+
         return redirect('listar_equipamentos')
 
     return render(request, 'equipamentos/editar.html', {
@@ -59,7 +75,14 @@ def excluir_equipamento(request, id):
     )
 
     if request.method == 'POST':
+
         equipamento.delete()
+
+        messages.success(
+            request,
+            'Equipamento excluído com sucesso!'
+        )
+
         return redirect('listar_equipamentos')
 
     return render(request, 'equipamentos/excluir.html', {
