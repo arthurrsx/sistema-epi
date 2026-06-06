@@ -2,24 +2,112 @@
 
 {% block content %}
 
-<h2 class="mb-4">
-    Cadastro de Colaborador
-</h2>
+<style>
+.container-form {
+    max-width: 600px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+}
 
-<form method="POST">
+.container-form h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
 
-    {% csrf_token %}
+.form-group {
+    margin-bottom: 15px;
+}
 
-    {{ form.as_p }}
+label {
+    font-weight: 600;
+    margin-bottom: 5px;
+    display: block;
+}
 
-    <button type="submit" class="btn btn-success">
-        Salvar
-    </button>
+input, select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    outline: none;
+}
 
-    <a href="/" class="btn btn-secondary">
-        Voltar
-    </a>
+input:focus, select:focus {
+    border-color: #28a745;
+}
 
-</form>
+.btn-area {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+</style>
+
+<div class="container-form">
+
+    <h2>Cadastro de Colaborador</h2>
+
+    <form method="POST" autocomplete="off">
+        {% csrf_token %}
+
+        <div class="form-group">
+            {{ form.nome.label_tag }}
+            {{ form.nome }}
+        </div>
+
+        <div class="form-group">
+            {{ form.cpf.label_tag }}
+            <input type="text" name="cpf" class="form-control cpf">
+        </div>
+
+        <div class="form-group">
+            {{ form.setor.label_tag }}
+            {{ form.setor }}
+        </div>
+
+        <div class="form-group">
+            {{ form.cargo.label_tag }}
+            {{ form.cargo }}
+        </div>
+
+        <div class="btn-area">
+            <button type="submit" class="btn btn-success">
+                Salvar
+            </button>
+
+            <a href="{% url 'listar_colaboradores' %}" class="btn btn-secondary">
+                Voltar
+            </a>
+        </div>
+
+    </form>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const cpfInput = document.querySelector(".cpf");
+
+    if (!cpfInput) return;
+
+    cpfInput.addEventListener("input", function () {
+
+        let value = cpfInput.value.replace(/\D/g, "");
+
+        value = value.substring(0, 11);
+
+        value = value.replace(/(\d{3})(\d)/, "$1.$2");
+        value = value.replace(/(\d{3})(\d)/, "$1.$2");
+        value = value.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+
+        cpfInput.value = value;
+    });
+
+});
+</script>
 
 {% endblock %}

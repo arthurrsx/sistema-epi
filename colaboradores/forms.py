@@ -5,4 +5,4 @@ class ColaboradorForm(forms.ModelForm):
 
     class Meta:
         model = Colaborador
-        fields = '__all__'
+        fields = ['nome', 'cpf', 'setor', 'cargo']

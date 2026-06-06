@@ -2,97 +2,213 @@
 
 {% block content %}
 
-<div class="d-flex justify-content-between align-items-center mb-3">
+<style>
+.container-box {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+}
 
-    <h2 class="mb-0">Gerenciamento de Colaboradores</h2>
+table tbody tr {
+    transition: 0.2s;
+}
 
-    <a href="/cadastrar/" class="btn btn-primary">
-        + Novo Colaborador
-    </a>
+table tbody tr:hover {
+    background-color: #f1f7ff;
+    transform: scale(1.01);
+}
+
+.actions {
+    text-align: right;
+}
+
+.actions a {
+    margin-left: 5px;
+}
+</style>
+
+<div class="container-box">
+
+    <!-- 🔥 TOPO -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+        <div>
+            <h2 class="mb-0">Gerenciamento de Colaboradores</h2>
+
+            <small class="text-muted">
+                Total de colaboradores:
+                <strong>{{ total_colaboradores }}</strong>
+            </small>
+        </div>
+
+        <a href="{% url 'cadastrar_colaborador' %}" class="btn btn-primary">
+            + Novo Colaborador
+        </a>
+
+    </div>
+
+    <!-- 🔍 BUSCA ESTILO GOOGLE -->
+    <div class="d-flex justify-content-start mb-4">
+
+        <div style="position: relative; width: 100%; max-width: 500px;">
+
+            <!-- lupa -->
+            <span style="
+                position: absolute;
+                left: 12px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #aaa;
+            ">
+                🔍
+            </span>
+
+            <input
+                type="text"
+                id="busca"
+                class="form-control"
+                placeholder="Pesquisar colaborador..."
+                autocomplete="off"
+                style="
+                    padding-left: 40px;
+                    border-radius: 25px;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                    border: 1px solid #ddd;
+                "
+            >
+
+            <!-- botão limpar -->
+            <button
+                type="button"
+                id="limparBusca"
+                style="
+                    position: absolute;
+                    right: 12px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    border: none;
+                    background: transparent;
+                    font-size: 16px;
+                    color: #888;
+                    cursor: pointer;
+                    display: none;
+                "
+            >
+                ✖
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- 📊 TABELA -->
+    <table class="table table-hover table-striped align-middle" id="tabela-colaboradores">
+
+        <thead class="table-dark">
+
+            <tr>
+                <th>Nome</th>
+                <th>CPF</th>
+                <th>Setor</th>
+                <th>Cargo</th>
+                <th class="actions">Ações</th>
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {% for colaborador in colaboradores %}
+
+            <tr>
+
+                <td>{{ colaborador.nome }}</td>
+
+                <td>
+                    <span class="badge bg-secondary">
+                        {{ colaborador.cpf }}
+                    </span>
+                </td>
+
+                <td>{{ colaborador.setor }}</td>
+
+                <td>{{ colaborador.cargo }}</td>
+
+                <td class="actions">
+
+                    <a
+                        href="{% url 'editar_colaborador' colaborador.id %}"
+                        class="btn btn-warning btn-sm"
+                        title="Editar"
+                    >
+                        ✏️
+                    </a>
+
+                    <a
+                        href="{% url 'excluir_colaborador' colaborador.id %}"
+                        class="btn btn-danger btn-sm"
+                        title="Excluir"
+                    >
+                        🗑️
+                    </a>
+
+                </td>
+
+            </tr>
+
+            {% empty %}
+
+            <tr>
+                <td colspan="5" class="text-center">
+                    Nenhum colaborador encontrado.
+                </td>
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
 
 </div>
 
-<form method="GET" class="mb-3">
+<!-- 🚀 BUSCA INSTANTÂNEA + LIMPAR -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
 
-    <input
-        type="text"
-        name="buscar"
-        class="form-control"
-        placeholder="Pesquisar colaborador"
-        value="{{ request.GET.buscar }}"
-    >
+    const input = document.getElementById("busca");
+    const rows = document.querySelectorAll("#tabela-colaboradores tbody tr");
+    const btnLimpar = document.getElementById("limparBusca");
 
-</form>
+    function filtrar() {
 
-<table class="table table-hover table-striped align-middle">
+        const valor = input.value.toLowerCase();
 
-    <thead class="table-dark">
+        rows.forEach(row => {
 
-        <tr>
+            const texto = row.innerText.toLowerCase();
 
-            <th>Nome</th>
-            <th>CPF</th>
-            <th>Setor</th>
-            <th>Cargo</th>
-            <th>Ações</th>
+            if (texto.includes(valor)) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
 
-        </tr>
+        });
 
-    </thead>
+        btnLimpar.style.display = valor ? "block" : "none";
+    }
 
-    <tbody>
+    input.addEventListener("input", filtrar);
 
-        {% for colaborador in colaboradores %}
+    btnLimpar.addEventListener("click", function () {
+        input.value = "";
+        filtrar();
+        input.focus();
+    });
 
-        <tr>
-
-            <td>{{ colaborador.nome }}</td>
-
-            <td>
-                <span class="badge bg-secondary">
-                    {{ colaborador.cpf }}
-                </span>
-            </td>
-
-            <td>{{ colaborador.setor }}</td>
-
-            <td>{{ colaborador.cargo }}</td>
-
-            <td>
-
-                <a
-                    href="/editar/{{ colaborador.id }}/"
-                    class="btn btn-warning btn-sm"
-                >
-                    Editar
-                </a>
-
-                <a
-                    href="/excluir/{{ colaborador.id }}/"
-                    class="btn btn-danger btn-sm"
-                    onclick="return confirm('Tem certeza que deseja excluir este colaborador?');"
-                >
-                    Excluir
-                </a>
-
-            </td>
-
-        </tr>
-
-        {% empty %}
-
-        <tr>
-
-            <td colspan="5" class="text-center">
-                Nenhum colaborador encontrado.
-            </td>
-
-        </tr>
-
-        {% endfor %}
-
-    </tbody>
-
-</table>
+});
+</script>
 
 {% endblock %}
