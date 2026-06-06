@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from .models import Equipamento
 from .forms import EquipamentoForm
 
 
+@login_required
 def listar_equipamentos(request):
 
     equipamentos = Equipamento.objects.all()
@@ -12,6 +14,7 @@ def listar_equipamentos(request):
     })
 
 
+@login_required
 def cadastrar_equipamento(request):
 
     form = EquipamentoForm(request.POST or None)
@@ -25,6 +28,7 @@ def cadastrar_equipamento(request):
     })
 
 
+@login_required
 def editar_equipamento(request, id):
 
     equipamento = get_object_or_404(
@@ -46,6 +50,7 @@ def editar_equipamento(request, id):
     })
 
 
+@login_required
 def excluir_equipamento(request, id):
 
     equipamento = get_object_or_404(

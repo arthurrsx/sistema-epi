@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from .models import Colaborador
 from .forms import ColaboradorForm
 
 
+@login_required
 def listar_colaboradores(request):
 
     busca = request.GET.get('buscar')
@@ -17,6 +19,7 @@ def listar_colaboradores(request):
     })
 
 
+@login_required
 def cadastrar_colaborador(request):
 
     form = ColaboradorForm(request.POST or None)
@@ -30,6 +33,7 @@ def cadastrar_colaborador(request):
     })
 
 
+@login_required
 def editar_colaborador(request, id):
 
     colaborador = get_object_or_404(Colaborador, id=id)
@@ -48,6 +52,7 @@ def editar_colaborador(request, id):
     })
 
 
+@login_required
 def excluir_colaborador(request, id):
 
     colaborador = get_object_or_404(Colaborador, id=id)

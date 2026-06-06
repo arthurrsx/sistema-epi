@@ -103,6 +103,17 @@
         <a href="{% url 'listar_emprestimos' %}">Empréstimos</a>        
 
         <a href="{% url 'relatorios' %}">Relatórios</a>
+
+        {% if user.is_authenticated %}
+
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger mt-4 w-100">
+                    Sair
+                </button>
+            </form>
+
+        {% endif %}
         
     </div>
 
@@ -124,23 +135,23 @@
 
         <div class="card-custom">
 
-    {% if messages %}
+            {% if messages %}
 
-        {% for message in messages %}
+                {% for message in messages %}
 
-            <div class="alert alert-{{ message.tags }}">
-                {{ message }}
-            </div>
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
 
-        {% endfor %}
+                {% endfor %}
 
-    {% endif %}
+            {% endif %}
 
-    {% block content %}
+            {% block content %}
 
-    {% endblock %}
+            {% endblock %}
 
-</div>
+        </div>
 
     </div>
 

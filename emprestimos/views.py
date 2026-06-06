@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 from .models import Emprestimo
 from .forms import EmprestimoForm
 
 
+@login_required
 def listar_emprestimos(request):
 
     emprestimos = Emprestimo.objects.all()
@@ -16,6 +18,7 @@ def listar_emprestimos(request):
     )
 
 
+@login_required
 def cadastrar_emprestimo(request):
 
     form = EmprestimoForm(request.POST or None)
@@ -38,6 +41,7 @@ def cadastrar_emprestimo(request):
     )
 
 
+@login_required
 def editar_emprestimo(request, id):
 
     emprestimo = get_object_or_404(
@@ -68,6 +72,7 @@ def editar_emprestimo(request, id):
     )
 
 
+@login_required
 def excluir_emprestimo(request, id):
 
     emprestimo = get_object_or_404(
@@ -85,6 +90,7 @@ def excluir_emprestimo(request, id):
     return redirect('listar_emprestimos')
 
 
+@login_required
 def relatorios(request):
 
     emprestimos = Emprestimo.objects.all()
