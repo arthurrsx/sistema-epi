@@ -11,11 +11,25 @@ def listar_emprestimos(request):
 
     emprestimos = Emprestimo.objects.all()
 
-    return render(
-        request,
-        'emprestimos/listar.html',
-        {'emprestimos': emprestimos}
-    )
+    colaborador = request.GET.get('colaborador', '')
+    equipamento = request.GET.get('equipamento', '')
+    status = request.GET.get('status', '')
+
+    if colaborador:
+        emprestimos = emprestimos.filter(colaborador__nome__icontains=colaborador)
+
+    if equipamento:
+        emprestimos = emprestimos.filter(equipamento__nome_epi__icontains=equipamento)
+
+    if status:
+        emprestimos = emprestimos.filter(status=status)
+
+    return render(request, 'emprestimos/listar.html', {
+        'emprestimos': emprestimos,
+        'colaborador': colaborador,
+        'equipamento': equipamento,
+        'status': status,
+    })
 
 
 @login_required
@@ -24,70 +38,47 @@ def cadastrar_emprestimo(request):
     form = EmprestimoForm(request.POST or None)
 
     if form.is_valid():
-
         form.save()
 
-        messages.success(
-            request,
-            'Empréstimo cadastrado com sucesso!'
-        )
-
+        messages.success(request, 'Empréstimo cadastrado com sucesso!')
         return redirect('listar_emprestimos')
 
-    return render(
-        request,
-        'emprestimos/cadastrar.html',
-        {'form': form}
-    )
+    return render(request, 'emprestimos/cadastrar.html', {
+        'form': form
+    })
 
 
 @login_required
 def editar_emprestimo(request, id):
 
-    emprestimo = get_object_or_404(
-        Emprestimo,
-        id=id
-    )
+    emprestimo = get_object_or_404(Emprestimo, id=id)
 
-    form = EmprestimoForm(
-        request.POST or None,
-        instance=emprestimo
-    )
+    form = EmprestimoForm(request.POST or None, instance=emprestimo)
 
     if form.is_valid():
-
         form.save()
 
-        messages.success(
-            request,
-            'Empréstimo atualizado com sucesso!'
-        )
-
+        messages.success(request, 'Empréstimo atualizado com sucesso!')
         return redirect('listar_emprestimos')
 
-    return render(
-        request,
-        'emprestimos/editar.html',
-        {'form': form}
-    )
+    return render(request, 'emprestimos/editar.html', {
+        'form': form
+    })
 
 
 @login_required
 def excluir_emprestimo(request, id):
 
-    emprestimo = get_object_or_404(
-        Emprestimo,
-        id=id
-    )
+    emprestimo = get_object_or_404(Emprestimo, id=id)
 
-    emprestimo.delete()
+    if request.method == 'POST':
+        emprestimo.delete()
+        messages.success(request, 'Empréstimo excluído com sucesso!')
+        return redirect('listar_emprestimos')
 
-    messages.success(
-        request,
-        'Empréstimo excluído com sucesso!'
-    )
-
-    return redirect('listar_emprestimos')
+    return render(request, 'emprestimos/confirmar_exclusao.html', {
+        'emprestimo': emprestimo
+    })
 
 
 @login_required
@@ -110,17 +101,11 @@ def relatorios(request):
         )
 
     if status:
-        emprestimos = emprestimos.filter(
-            status=status
-        )
+        emprestimos = emprestimos.filter(status=status)
 
-    return render(
-        request,
-        'emprestimos/relatorios.html',
-        {
-            'emprestimos': emprestimos,
-            'colaborador': colaborador,
-            'equipamento': equipamento,
-            'status': status,
-        }
-    )
+    return render(request, 'emprestimos/relatorios.html', {
+        'emprestimos': emprestimos,
+        'colaborador': colaborador,
+        'equipamento': equipamento,
+        'status': status,
+    })

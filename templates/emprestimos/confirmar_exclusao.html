@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 class="mb-4">
+    Excluir Empréstimo
+</h2>
+
+<div class="alert alert-danger">
+
+    Deseja realmente excluir o empréstimo de
+    <strong>{{ emprestimo.colaborador }}</strong>
+    com o equipamento
+    <strong>{{ emprestimo.equipamento }}</strong>?
+
+</div>
+
+<form method="POST">
+
+    {% csrf_token %}
+
+    <button type="submit" class="btn btn-danger">
+        Confirmar Exclusão
+    </button>
+
+    <a href="{% url 'listar_emprestimos' %}" class="btn btn-secondary">
+        Cancelar
+    </a>
+
+</form>
+
+{% endblock %}

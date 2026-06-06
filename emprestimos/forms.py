@@ -17,33 +17,44 @@ class EmprestimoForm(forms.ModelForm):
         ]
 
         widgets = {
-            'data_prevista_devolucao': forms.DateInput(attrs={'type': 'date'}),
-            'data_devolucao': forms.DateInput(attrs={'type': 'date'}),
+            'data_prevista_devolucao': forms.DateTimeInput(
+                attrs={'type': 'datetime-local'},
+                format='%Y-%m-%dT%H:%M'
+            ),
+            'data_devolucao': forms.DateTimeInput(
+                attrs={'type': 'datetime-local'},
+                format='%Y-%m-%dT%H:%M'
+            ),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # CADASTRO (só status permitidos)
-        if not self.instance.pk:
+        self.fields['data_prevista_devolucao'].input_formats = ['%Y-%m-%dT%H:%M']
+        self.fields['data_devolucao'].input_formats = ['%Y-%m-%dT%H:%M']
+
+        # 🔥 bloqueia edição (mantido como você já tinha)
+        if self.instance.pk:
+            self.fields['colaborador'].disabled = True
+            self.fields['equipamento'].disabled = True
+            self.fields['data_prevista_devolucao'].disabled = True
+
+        else:
             self.fields['status'].choices = [
                 ('EMPRESTADO', 'Emprestado'),
                 ('FORNECIDO', 'Fornecido'),
             ]
 
-        # EDIÇÃO (bloqueia campos fixos)
-        else:
-            self.fields['colaborador'].disabled = True
-            self.fields['equipamento'].disabled = True
-            self.fields['data_prevista_devolucao'].disabled = True
-
     def clean_data_prevista_devolucao(self):
-        data = self.cleaned_data['data_prevista_devolucao']
+        data = self.cleaned_data.get('data_prevista_devolucao')
 
-        # 🔥 CORREÇÃO DO ERRO (date vs datetime)
-        if data <= timezone.now().date():
-            raise forms.ValidationError(
-                'A data prevista de devolução deve ser futura.'
-            )
+        if data:
+            if timezone.is_naive(data):
+                data = timezone.make_aware(data)
+
+            if data <= timezone.now():
+                raise forms.ValidationError(
+                    "A data prevista deve ser futura."
+                )
 
         return data

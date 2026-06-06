@@ -1,7 +1,4 @@
 from django.db import models
-from django.utils import timezone
-from django.core.exceptions import ValidationError
-
 from colaboradores.models import Colaborador
 from equipamentos.models import Equipamento
 
@@ -20,9 +17,7 @@ class Emprestimo(models.Model):
     equipamento = models.ForeignKey(Equipamento, on_delete=models.CASCADE)
 
     data_emprestimo = models.DateTimeField(auto_now_add=True)
-
-    data_prevista_devolucao = models.DateField()
-
+    data_prevista_devolucao = models.DateTimeField()
     data_devolucao = models.DateTimeField(null=True, blank=True)
 
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='EMPRESTADO')

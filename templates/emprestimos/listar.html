@@ -2,6 +2,8 @@
 
 {% block content %}
 
+{% load tz %}
+
 <style>
 .container-box {
     background: #fff;
@@ -16,17 +18,12 @@ table tbody tr {
 
 table tbody tr:hover {
     background-color: #f1f7ff;
-    transform: scale(1.01);
-}
-
-.actions a {
-    margin-right: 5px;
 }
 </style>
 
 <div class="container-box">
 
-    <!-- TOPO PADRÃO -->
+    <!-- TOPO -->
     <div class="d-flex justify-content-between align-items-center mb-3">
 
         <div>
@@ -44,79 +41,147 @@ table tbody tr:hover {
 
     </div>
 
+<form method="GET" id="searchForm" class="row g-2 mb-3">
+
+    <div class="col-md-4">
+        <input type="text"
+               name="colaborador"
+               id="colaborador"
+               class="form-control"
+               placeholder="Pesquisar colaborador"
+               value="{{ colaborador }}">
+    </div>
+
+    <div class="col-md-4">
+        <input type="text"
+               name="equipamento"
+               id="equipamento"
+               class="form-control"
+               placeholder="Pesquisar equipamento"
+               value="{{ equipamento }}">
+    </div>
+
+    <div class="col-md-3">
+        <select name="status" id="status" class="form-select">
+            <option value="">Todos os status</option>
+            <option value="EMPRESTADO" {% if status == "EMPRESTADO" %}selected{% endif %}>Emprestado</option>
+            <option value="FORNECIDO" {% if status == "FORNECIDO" %}selected{% endif %}>Fornecido</option>
+            <option value="DEVOLVIDO" {% if status == "DEVOLVIDO" %}selected{% endif %}>Devolvido</option>
+            <option value="DANIFICADO" {% if status == "DANIFICADO" %}selected{% endif %}>Danificado</option>
+            <option value="PERDIDO" {% if status == "PERDIDO" %}selected{% endif %}>Perdido</option>
+        </select>
+    </div>
+
+</form>
+    
     <!-- TABELA -->
-    <table class="table table-hover table-striped align-middle">
+    <div class="table-responsive">
 
-        <thead class="table-dark">
-            <tr>
-                <th>Colaborador</th>
-                <th>Equipamento</th>
-                <th>Status</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
+        <table class="table table-hover table-striped align-middle">
 
-        <tbody>
+            <thead class="table-dark">
+                <tr>
+                    <th>Colaborador</th>
+                    <th>Equipamento</th>
+                    <th>Data Empréstimo</th>
+                    <th>Data Prevista</th>
+                    <th>Status</th>
+                    <th style="width: 160px;">Ações</th>
+                </tr>
+            </thead>
 
-            {% for emprestimo in emprestimos %}
+            <tbody>
 
-            <tr>
+                {% for emprestimo in emprestimos %}
 
-                <td>{{ emprestimo.colaborador }}</td>
-                <td>{{ emprestimo.equipamento }}</td>
+                <tr>
 
-                <td>
+                    <td>{{ emprestimo.colaborador }}</td>
 
-                    {% if emprestimo.status == 'EMPRESTADO' %}
-                        <span class="badge bg-warning text-dark">Emprestado</span>
+                    <td>{{ emprestimo.equipamento }}</td>
 
-                    {% elif emprestimo.status == 'FORNECIDO' %}
-                        <span class="badge bg-primary">Fornecido</span>
+                    <!-- DATA EMPRÉSTIMO -->
+                    <td>
+                        {{ emprestimo.data_emprestimo|date:"d/m/Y H:i" }}
+                    </td>
 
-                    {% elif emprestimo.status == 'DEVOLVIDO' %}
-                        <span class="badge bg-success">Devolvido</span>
+                    <!-- DATA PREVISTA (CORRIGIDA) -->
+                    <td>
+                        {{ emprestimo.data_prevista_devolucao|localtime|date:"d/m/Y H:i" }}
+                    </td>
 
-                    {% elif emprestimo.status == 'DANIFICADO' %}
-                        <span class="badge bg-danger">Danificado</span>
+                    <!-- STATUS -->
+                    <td>
 
-                    {% elif emprestimo.status == 'PERDIDO' %}
-                        <span class="badge bg-dark">Perdido</span>
+                        {% if emprestimo.status == 'EMPRESTADO' %}
+                            <span class="badge bg-warning text-dark">Emprestado</span>
 
-                    {% endif %}
+                        {% elif emprestimo.status == 'FORNECIDO' %}
+                            <span class="badge bg-primary">Fornecido</span>
 
-                </td>
+                        {% elif emprestimo.status == 'DEVOLVIDO' %}
+                            <span class="badge bg-success">Devolvido</span>
 
-                <td>
+                        {% elif emprestimo.status == 'DANIFICADO' %}
+                            <span class="badge bg-danger">Danificado</span>
 
-                    <a href="{% url 'editar_emprestimo' emprestimo.id %}"
-                       class="btn btn-warning btn-sm">
-                        Editar
-                    </a>
+                        {% elif emprestimo.status == 'PERDIDO' %}
+                            <span class="badge bg-dark">Perdido</span>
 
-                    <a href="{% url 'excluir_emprestimo' emprestimo.id %}"
-                       class="btn btn-danger btn-sm"
-                       onclick="return confirm('Tem certeza que deseja excluir este empréstimo?');">
-                        Excluir
-                    </a>
+                        {% endif %}
 
-                </td>
+                    </td>
 
-            </tr>
+                    <!-- AÇÕES -->
+                    <td class="text-nowrap">
 
-            {% empty %}
+                        <a href="{% url 'editar_emprestimo' emprestimo.id %}"
+                           class="btn btn-warning btn-sm">
+                            Editar
+                        </a>
 
-            <tr>
-                <td colspan="4" class="text-center">
-                    Nenhum empréstimo cadastrado.
-                </td>
-            </tr>
+                        <a href="{% url 'excluir_emprestimo' emprestimo.id %}"
+                           class="btn btn-danger btn-sm">
+                            Excluir
+                        </a>
 
-            {% endfor %}
+                    </td>
 
-        </tbody>
+                </tr>
 
-    </table>
+                {% empty %}
+
+                <tr>
+                    <td colspan="6" class="text-center text-muted">
+                        Nenhum empréstimo cadastrado.
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
 
 </div>
+
+<script>
+let timer = null;
+
+function submitForm() {
+    document.getElementById('searchForm').submit();
+}
+
+function debounceSearch() {
+    clearTimeout(timer);
+    timer = setTimeout(submitForm, 500); // meio segundo após parar de digitar
+}
+
+document.getElementById('colaborador').addEventListener('input', debounceSearch);
+document.getElementById('equipamento').addEventListener('input', debounceSearch);
+document.getElementById('status').addEventListener('change', submitForm);
+</script>
 
 {% endblock %}
