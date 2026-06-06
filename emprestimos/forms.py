@@ -31,7 +31,7 @@ class EmprestimoForm(forms.ModelForm):
                 ('FORNECIDO', 'Fornecido'),
             ]
 
-        # EDIÇÃO: bloqueia campos
+        # EDIÇÃO
         else:
             self.fields['colaborador'].disabled = True
             self.fields['equipamento'].disabled = True
@@ -40,7 +40,7 @@ class EmprestimoForm(forms.ModelForm):
     def clean_data_prevista_devolucao(self):
         data = self.cleaned_data['data_prevista_devolucao']
 
-        if data <= timezone.now().date():
+        if data <= timezone.now():
             raise forms.ValidationError(
                 'A data prevista de devolução deve ser futura.'
             )

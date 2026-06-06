@@ -98,7 +98,7 @@
             <td>{{ emprestimo.colaborador }}</td>
             <td>{{ emprestimo.equipamento }}</td>
             <td>{{ emprestimo.status }}</td>
-            <td>{{ emprestimo.data_prevista_devolucao }}</td>
+            <td>{{ emprestimo.data_prevista_devolucao|date:"d/m/Y" }}</td>
         </tr>
 
         {% empty %}
